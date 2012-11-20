@@ -373,6 +373,33 @@
 	return value;
 }
 
++ (TBXMLElement*) siblingChildElementNamed:(NSString*)aName parentElement:(TBXMLElement*)aParentXMLElement{
+    
+	TBXMLElement * xmlElement = aParentXMLElement->firstChild;
+	const char * name = [aName cStringUsingEncoding:NSUTF8StringEncoding];
+	while (xmlElement) {
+		if (strlen(xmlElement->name) == strlen(name) && memcmp(xmlElement->name,name,strlen(name)) == 0) {
+			return xmlElement;
+		}
+		xmlElement = xmlElement->nextSibling;
+	}
+	return nil;
+}
+
++ (TBXMLAttribute *) attributeNamed:(NSString *)aName parentElement:(TBXMLElement *)aParentXMLElement
+{
+    TBXMLAttribute *attributeElement = aParentXMLElement->firstAttribute;
+    const char * name = [aName cStringUsingEncoding:NSUTF8StringEncoding];
+    
+    while (attributeElement) {
+        if (strlen(attributeElement->name) == strlen(name) && memcmp(attributeElement->name,name,strlen(name)) == 0) {
+			return attributeElement;
+		}
+        attributeElement = attributeElement->next;
+    }
+    return nil;
+}
+
 + (TBXMLElement*) childElementNamed:(NSString*)aName parentElement:(TBXMLElement*)aParentXMLElement{
     
 	TBXMLElement * xmlElement = aParentXMLElement->firstChild;
