@@ -5,19 +5,19 @@
 // ================================================================================================
 //  Created by Tom Bradley on 21/10/2009.
 //  Version 1.5
-//  
+//
 //  Copyright 2012 71Squared All rights reserved.
-//  
+//
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 //  copies of the Software, and to permit persons to whom the Software is
 //  furnished to do so, subject to the following conditions:
-//  
+//
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
-//  
+//
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -89,7 +89,7 @@
 		currentAttributeBuffer = 0;
 		
 		currentElement = 0;
-		currentAttribute = 0;		
+		currentAttribute = 0;
 		
 		bytes = 0;
 		bytesLength = 0;
@@ -109,7 +109,7 @@
         [self allocateBytesOfLength:[aXMLString lengthOfBytesUsingEncoding:NSUTF8StringEncoding] error:error];
         
         // if an error occured, return
-        if (error && *error != nil) 
+        if (error && *error != nil)
             return self;
         
 		// copy string to byte array
@@ -170,7 +170,7 @@
         
         // Get the bundle that this class resides in. This allows to load resources from the app bundle when running unit tests.
         NSString * bundlePath = [[NSBundle bundleForClass:[self class]] pathForResource:aXMLFile ofType:aFileExtension];
-
+        
         if (!bundlePath) {
             if (error) {
                 NSDictionary * userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[aXMLFile stringByAppendingPathExtension:aFileExtension], NSFilePathErrorKey, nil];
@@ -182,11 +182,11 @@
             // Get uncompressed file contents if TBXML+Compression has been included
             if ([[NSData class] respondsToSelector:dataWithUncompressedContentsOfFile]) {
                 
-                #pragma clang diagnostic push
-                #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                 data = [[NSData class] performSelector:dataWithUncompressedContentsOfFile withObject:bundlePath];
-                #pragma clang diagnostic pop   
-
+#pragma clang diagnostic pop
+                
             } else {
                 data = [NSData dataWithContentsOfFile:bundlePath];
             }
@@ -211,7 +211,7 @@
     
     // allocate memory for byte array
     [self allocateBytesOfLength:[data length] error:error];
-
+    
     // if an error occured, return
     if (error && *error)
         return;
@@ -357,7 +357,7 @@
             if (attribute->value[0])
                 value = [NSString stringWithCString:&attribute->value[0] encoding:NSUTF8StringEncoding];
             else
-                value = [NSString stringWithString:@""];
+                value = @"";
             
 			break;
 		}
@@ -501,7 +501,7 @@
                 
             }
         } else {
-            currTBXMLElement = [TBXML childElementNamed:iTagName parentElement:currTBXMLElement];            
+            currTBXMLElement = [TBXML childElementNamed:iTagName parentElement:currTBXMLElement];
         }
         
         if (!currTBXMLElement) {
@@ -524,7 +524,7 @@
 }
 
 + (void)iterateAttributesOfElement:(TBXMLElement *)anElement withBlock:(TBXMLIterateAttributeBlock)iterateAttributeBlock {
-
+    
     // Obtain first attribute from element
     TBXMLAttribute * attribute = anElement->firstAttribute;
     
@@ -579,8 +579,8 @@
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[TBXML errorTextForCode:code], NSLocalizedDescriptionKey, nil];
     
-    return [NSError errorWithDomain:D_TBXML_DOMAIN 
-                               code:code 
+    return [NSError errorWithDomain:D_TBXML_DOMAIN
+                               code:code
                            userInfo:userInfo];
 }
 
@@ -589,8 +589,8 @@
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:someUserInfo];
     [userInfo setValue:[TBXML errorTextForCode:code] forKey:NSLocalizedDescriptionKey];
     
-    return [NSError errorWithDomain:D_TBXML_DOMAIN 
-                               code:code 
+    return [NSError errorWithDomain:D_TBXML_DOMAIN
+                               code:code
                            userInfo:userInfo];
 }
 
@@ -628,7 +628,7 @@
 			elementStart = strstr(elementStart,"-->") + 3;
 			continue;
 		}
-
+        
 		// detect cdata section within element text
 		int isCDATA = strncmp(elementStart,"<![CDATA[",9);
 		
@@ -659,21 +659,21 @@
 			
 			// remove begining cdata section tag
 			memcpy(elementStart, elementStart+9, CDATAEnd-elementStart-9);
-
+            
 			// remove ending cdata section tag
 			memcpy(CDATAEnd-9, CDATAEnd+3, textLength-CDATALength-3);
 			
 			// blank out end of text
 			memset(elementStart+textLength-12,' ',12);
 			
-			// set new search start position 
+			// set new search start position
 			elementStart = CDATAEnd-9;
 			continue;
 		}
 		
 		
 		// find element end, skipping any cdata sections within attributes
-		char * elementEnd = elementStart+1;		
+		char * elementEnd = elementStart+1;
 		while ((elementEnd = strpbrk(elementEnd, "<>"))) {
 			if (strncmp(elementEnd,"<![CDATA[",9) == 0) {
 				elementEnd = strstr(elementEnd,"]]>")+3;
@@ -703,15 +703,15 @@
 		if (*elementNameStart == '/') {
 			elementStart = elementEnd+1;
 			if (parentXMLElement) {
-
+                
 				if (parentXMLElement->text) {
 					// trim whitespace from start of text
-					while (isspace(*parentXMLElement->text)) 
+					while (isspace(*parentXMLElement->text))
 						parentXMLElement->text++;
 					
 					// trim whitespace from end of text
 					char * end = parentXMLElement->text + strlen(parentXMLElement->text)-1;
-					while (end > parentXMLElement->text && isspace(*end)) 
+					while (end > parentXMLElement->text && isspace(*end))
 						*end--=0;
 				}
 				
@@ -761,9 +761,9 @@
 		}
 		
 		
-		// in the following xml the ">" is replaced with \0 by elementEnd. 
+		// in the following xml the ">" is replaced with \0 by elementEnd.
 		// element may contain no atributes and would return nil while looking for element name end
-		// <tile> 
+		// <tile>
 		// find end of element name
 		char * elementNameEnd = strpbrk(xmlElement->name," /\n");
 		
@@ -789,32 +789,32 @@
 			while (chr++ < elementEnd) {
 				
 				switch (mode) {
-					// look for start of attribute name
+                        // look for start of attribute name
 					case TBXML_ATTRIBUTE_NAME_START:
 						if (isspace(*chr)) continue;
 						name = chr;
 						mode = TBXML_ATTRIBUTE_NAME_END;
 						break;
-					// look for end of attribute name
+                        // look for end of attribute name
 					case TBXML_ATTRIBUTE_NAME_END:
 						if (isspace(*chr) || *chr == '=') {
 							*chr = 0;
 							mode = TBXML_ATTRIBUTE_VALUE_START;
 						}
 						break;
-					// look for start of attribute value
+                        // look for start of attribute value
 					case TBXML_ATTRIBUTE_VALUE_START:
 						if (isspace(*chr)) continue;
 						if (*chr == '"' || *chr == '\'') {
 							value = chr+1;
 							mode = TBXML_ATTRIBUTE_VALUE_END;
-							if (*chr == '\'') 
+							if (*chr == '\'')
 								singleQuote = YES;
 							else
 								singleQuote = NO;
 						}
 						break;
-					// look for end of attribute value
+                        // look for end of attribute value
 					case TBXML_ATTRIBUTE_VALUE_END:
 						if (*chr == '<' && strncmp(chr, "<![CDATA[", 9) == 0) {
 							mode = TBXML_ATTRIBUTE_CDATA_END;
@@ -844,7 +844,7 @@
 							if (lastXMLAttribute) lastXMLAttribute->next = xmlAttribute;
 							// set last attribute to this attribute
 							lastXMLAttribute = xmlAttribute;
-
+                            
 							// set attribute name & value
 							xmlAttribute->name = name;
 							xmlAttribute->value = value;
@@ -864,7 +864,7 @@
 								mode = TBXML_ATTRIBUTE_VALUE_END;
 							}
 						}
-						break;						
+						break;
 					default:
 						break;
 				}
